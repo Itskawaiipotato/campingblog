@@ -1,0 +1,194 @@
+form action = "<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="post">
+   <div>
+      <label for="username">Username:</label>
+      <input type="text" name="username" id="name">
+   </div>
+   <div>
+      <label for="password">Password:</label>
+      <input type="password" name="password" id="password">
+   </div>
+   <section style="margin-left:2rem;">
+      <button type="submit" name="login">Login</button>
+   </section>
+</form>
+
+<?php
+   if (array_key_exists($user, $users)) {
+      if ($users[$_POST['username']]==$_POST['password']) {
+         $_SESSION['valid'] = true;
+         $_SESSION['timeout'] = time();
+         $_SESSION['username'] = $_POST['username'];
+         $msg = "You have entered correct username and password";
+      } else { 
+         $msg = "You have entered wrong Password"; 
+      }
+   } else {
+      $msg = "You have entered wrong user name";
+   }
+?>
+
+<?php
+   ob_start();
+   session_start();
+?>
+<html lang = "en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <link rel="stylesheet" href="loginstyle.css">
+   <title>Login</title>
+</head>
+<body>
+   <h2 style="margin-left:10rem; margin-top:5rem;">Enter Username and Password</h2> 
+   <?php
+      $msg = '';
+      $users = ['user'=>"test", "manager"=>"secret", "guest"=>"abc123"];
+
+      if (isset($_POST['login']) && !empty($_POST['username']) 
+      && !empty($_POST['password'])) {
+         $user=$_POST['username'];                  
+         if (array_key_exists($user, $users)){
+            if ($users[$_POST['username']]==$_POST['password']){
+               $_SESSION['valid'] = true;
+               $_SESSION['timeout'] = time();
+               $_SESSION['username'] = $_POST['username'];
+               $msg = "You have entered correct username and password";
+            }
+            else {
+               $msg = "You have entered wrong Password";
+            }
+         }
+         else {
+            $msg = "You have entered wrong user name";
+         }
+      }
+   ?>
+
+   <h4 style="margin-left:10rem; color:red;"><?php echo $msg; ?></h4>
+   <br/><br/>
+   <form action = "<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="post">
+      <div>
+         <label for="username">Username:</label>
+         <input type="text" name="username" id="name">
+      </div>
+      <div>
+         <label for="password">Password:</label>
+         <input type="password" name="password" id="password">
+      </div>
+      <section style="margin-left:2rem;">
+         <button type="submit" name="login">Login</button>
+      </section>
+   </form>
+
+   <p style="margin-left: 2rem;"> 
+      <a href = "logout.php" tite = "Logout">Click here to clean Session.</a>
+   </p>
+   </div> 
+</body>
+</html>
+
+<?php
+   session_start();
+   unset($_SESSION["username"]);
+   unset($_SESSION["password"]);
+   
+   echo '<h4>You have cleaned session</h4>';
+   header('Refresh: 2; URL = login.php');
+?>
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>The Season's Best Campsite</title>
+    </head>
+    <body>
+        <header>
+            <h1>The Season's Best Campsite</h1>
+        </header>
+        <main>
+            <!--The Blog-->
+           <?php if (is_array($blog) && count($blog) > 0) : ?>
+           <h2>Blog</h2>
+        </main>
+    </body>
+
+<?php
+$cookie_name = "user";
+$cookie_value = "Kaylee Simmons";
+setcookie($cookie_name, $cookie_value, time() + (86400 * 30), "/"); // 86400 = 1 day
+?>
+<html>
+<body>
+
+<?php
+if(!isset($_COOKIE[$cookie_name])) {
+  echo "Cookie named '" . $cookie_name . "' is not set!";
+} else {
+  echo "Cookie '" . $cookie_name . "' is set!<br>";
+  echo "Value is: " . $_COOKIE[$cookie_name];
+}
+?>
+
+</body>
+</html>
+
+<?php
+// Welcome to the Season's Best Campsite
+public function __construct($conn) 
+    {
+        $this->conn = $conn;
+    }
+    public function getBlogPosts() 
+    {
+        $query = "SELECT blog_posts.id, blog_posts.title, blog_posts.post, people.first_name, people.last_name, blog_posts.date_posted 
+FROM blog_posts 
+INNER JOIN people ON blog_posts.author_id = people.id";
+        $result = $this->conn->query($query);
+        $blogPosts = $result->fetch_all(MYSQLI_ASSOC);
+        return $blogPosts;
+    }
+    public function getTagsForBlogPost($blogPostId)
+    {
+        $query = "SELECT tags.name 
+FROM tags 
+INNER JOIN blog_post_tags ON tags.id = blog_post_tags.tag_id 
+WHERE blog_post_tags.blog_post_id = ?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bind_param('i', $blogPostId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $tags = [];
+        while ($row = $result->fetch_assoc()) {
+            $tags[] = $row['name'];
+        }
+        return $tags;
+    }
+    public function getBlogPostById($blogPostId) 
+    {
+        $query = "SELECT blog_posts.id, blog_posts.title, blog_posts.post, people.first_name, people.last_name, blog_posts.date_posted 
+FROM blog_posts 
+INNER JOIN people ON blog_posts.author_id = people.id 
+WHERE blog_posts.id = ?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bind_param('i', $blogPostId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $blogPost = $result->fetch_assoc();
+        return $blogPost;
+    }
+}
+?>
+
+<?php 
+$language = 'Campsite';
+$message = 'Welcome to' . $language; // 'Welcome to The Season's Best Campsite'
+
+$query = 'SELECT firstname, lastname
+from users';       // Spans multiple times
+?>
+
+<?php
+for ($count = 1; $count <=10; $count++){
+    echo $count . '<br>';
+}
+?>
